@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.example.javaSlackIntgn.model.Reply;
 import com.example.javaSlackIntgn.repository.ReplyRepository;
+import com.example.javaSlackIntgn.service.AIService;
 
 @RestController
 @RequestMapping("/api/slack")
@@ -25,6 +26,9 @@ public class SlackEventController {
 
     @Autowired
     private ReplyRepository replyRepository;
+
+    @Autowired
+    private AIService aiService;
 
     @PostMapping("/events")
     public ResponseEntity<?> handleSlackEvent(@RequestBody String jsonPayload) {
@@ -76,7 +80,8 @@ public class SlackEventController {
                     logger.info("Stored user reply in database: {}", userReply);
                     
                     // Process the mention event and get bot's response
-                    String botResponse = slackService.handleMention(mentionEvent);
+                    String userMessage = mentionEvent.getText();
+                    String botResponse = aiService.generateResponse(userMessage, mentionEvent.getChannel());
                     
                     // Save bot's response to database
                     Reply botReply = new Reply();

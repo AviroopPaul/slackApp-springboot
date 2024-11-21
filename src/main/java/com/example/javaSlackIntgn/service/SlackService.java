@@ -26,23 +26,27 @@ public class SlackService {
     );
 
     public void sendMessage(String channel, String text) throws IOException, SlackApiException {
-        try {
-            var slack = Slack.getInstance();
-            var response = slack.methods(slackToken).chatPostMessage(req -> 
-                req.channel(channel)
-                   .text(text)
-            );
-            
-            if (!response.isOk()) {
-                log.error("Failed to send message: {}", response.getError());
-                throw new RuntimeException("Failed to send message: " + response.getError());
-            }
-            
-            log.info("Message sent successfully to channel: {}", channel);
-        } catch (IOException | SlackApiException e) {
-            log.error("Error sending message to Slack", e);
-            throw e;
+        if (slackToken == null || slackToken.isEmpty()) {
+            log.error("Slack token is null or empty");
+            throw new RuntimeException("Slack token not configured");
         }
+
+        log.debug("Attempting to send message to channel: {} with text length: {}", 
+                 channel, text != null ? text.length() : 0);
+
+        var slack = Slack.getInstance();
+        var response = slack.methods(slackToken).chatPostMessage(req -> req
+                .channel(channel)
+                .text(text != null ? text : "No message content")
+                .unfurlLinks(true)
+                .mrkdwn(true));
+
+        if (!response.isOk()) {
+            log.error("Failed to send message: {}", response.getError());
+            throw new SlackApiException(response, "Failed to send message: " + response.getError());
+        }
+
+        log.info("Message sent successfully to channel: {}", channel);
     }
 
     public String handleMention(AppMentionEvent event) {
