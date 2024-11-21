@@ -1,9 +1,7 @@
 package com.example.javaSlackIntgn.controller;
 
-import com.example.javaSlackIntgn.service.SlackService;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.slack.api.app_backend.events.payload.EventsApiPayload;
 import com.slack.api.model.event.AppMentionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +18,6 @@ import com.example.javaSlackIntgn.service.AIService;
 public class SlackEventController {
 
     private static final Logger logger = LoggerFactory.getLogger(SlackEventController.class);
-
-    @Autowired
-    private SlackService slackService;
 
     @Autowired
     private ReplyRepository replyRepository;
