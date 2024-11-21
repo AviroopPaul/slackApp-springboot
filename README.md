@@ -9,4 +9,3 @@ A Spring Boot application that sends messages to Slack channels using the Slack 
 3. Run the application using:
    ```bash
    mvn spring-boot:run
-# slackApp-springboot
